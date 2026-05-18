@@ -1,0 +1,62 @@
+name: Check
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    outputs:
+      lint_result:
+        description: 'Result of the lint step (success, failure, or skipped)'
+        value: ${{ jobs.main.outputs.lint_result }}
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    outputs:
+      lint_result: ${{ steps.lint.outcome }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          # Need full history for version calculation in in ./utils/gitinfo.ts
+          fetch-depth: 0
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 'latest'
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+      - name: Install dependencies
+        shell: bash
+        run: pnpm install
+      - name: Lint files
+        id: lint
+        run: pnpm run lint
+      - name: Run TypeScript typecheck
+        id: typecheck
+        run: pnpm run typecheck
+      - name: Job summary
+        if: always()
+        run: |
+          VERSION_NAME=$(jq -r '.version_name' < "${{ vars.OUTDIR }}/manifest.json")
+          status() {
+            case "$1" in
+              success) echo "✅ Passed" ;;
+              failure) echo "❌ Failed" ;;
+              *) echo "⏭️ Skipped" ;;
+            esac
+          }
+          LINT_STATUS="${{ steps.lint.outcome }}"
+          TYPECHECK_STATUS="${{ steps.typecheck.outcome }}"
+          {
+            echo "## Check Results — ${VERSION_NAME}"
+            echo ""
+            echo "| Check | Status |"
+            echo "| --- | --- |"
+            echo "| 🔍 Lint | $(status "$LINT_STATUS") |"
+            echo "| 📝 TypeScript | $(status "$TYPECHECK_STATUS") |"
+          } >> "$GITHUB_STEP_SUMMARY"
