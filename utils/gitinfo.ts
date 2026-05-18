@@ -71,5 +71,5 @@ export async function getGitInfo(
 		console.warn(`Version '${version}' does not match expected format, using default version '0.0.0.1'`);
 		version = '0.0.0.1';
 	}
-	return { version, version_name };
+	return { version, tag, version_name };
 }

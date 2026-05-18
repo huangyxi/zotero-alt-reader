@@ -1,16 +1,36 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import crypto from 'node:crypto';
 import { defineConfig, type Wxt } from 'wxt';
 import { build } from 'vite';
+
 import { getGitInfo } from './utils/gitinfo';
+import { docComments } from './utils/comments';
+
 import pkg from './package.json';
 
-const { version } = await getGitInfo();
+const { version_name, tag } = await getGitInfo();
+const zoteroVersion = {
+	strict_min_version: '9.0',
+	strict_max_version: '9.*'
+}
+const comments = [
+	`${pkg.homepage}`,
+	`${pkg.config.pluginName} ${version_name}`,
+	`Build date: ${new Date().toISOString()}`,
+]
+if (process.env.GITHUB_SERVER_URL && process.env.GITHUB_REPOSITORY && process.env.GITHUB_RUN_ID) {
+	comments.push(
+		`GitHub Actions Build URI: ${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+	);
+}
 
 export default defineConfig({
 	srcDir: 'src',
 	manifestVersion: 2,
 	manifest: {
 		name: pkg.config.pluginName,
-		version: version,
+		version: version_name,
 		description: pkg.description,
 		// @ts-ignore - Zotero doesn't support the email format for the author field
 		author: pkg.author,
@@ -19,8 +39,7 @@ export default defineConfig({
 			zotero: {
 				id: pkg.config.pluginId,
 				update_url: `${pkg.homepage}/releases/download/release/update.json`,
-				strict_min_version: '9.0',
-				strict_max_version: '9.*'
+				...zoteroVersion
 			}
 		}
 	},
@@ -32,29 +51,67 @@ export default defineConfig({
 		artifactTemplate: '{{name}}-{{version}}.xpi'
 	},
 	vite: () => ({
+		build: {
+			minify: false,
+			rolldownOptions: {
+				output: {
+					banner: docComments(comments)
+				}
+			}
+		},
 		define: {
 			__PLUGIN_INSTANCE__: JSON.stringify(pkg.config.pluginInstance)
 		}
 	}),
 	hooks: {
+		// Build bootstrap.js using Vite
 		'build:done': async (wxt: Wxt) => {
-			const targetDir = wxt.config.outDir || '.output/firefox-mv2';
+			const targetDir = wxt.config.outDir;
 			await build({
 				configFile: false,
 				build: {
 					emptyOutDir: false,
 					outDir: targetDir,
+					minify: false,
+					rolldownOptions: {
+						output: {
+							banner: docComments(comments)
+						}
+					},
 					lib: {
 						entry: 'src/bootstrap.ts',
 						name: '_ZoteroBootstrap',
 						formats: ['iife'],
-						fileName: () => 'bootstrap.js'
+						fileName: () => 'bootstrap.js',
 					}
 				},
 				define: {
 					__PLUGIN_INSTANCE__: JSON.stringify(pkg.config.pluginInstance)
 				}
 			});
+		},
+		// Generate update.json for GitHub Releases
+		'zip:done': async (wxt: Wxt, zipFiles: string[]) => {
+			const zipFile = zipFiles[0];
+			const fileBuffer = await fs.readFile(zipFile);
+			const hash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+			const updateInfo = {
+				addons: {
+					[pkg.config.pluginId]: {
+						updates: [{
+							version: version_name,
+							update_link: `${pkg.homepage}/releases/download/${tag}/${path.basename(zipFile)}`,
+							update_hash: `sha256:${hash}`,
+							applications: {
+								zotero: zoteroVersion
+							}
+						}]
+					}
+				}
+			};
+			const outputPath = path.join(wxt.config.outBaseDir, 'update.json');
+			await fs.writeFile(outputPath, JSON.stringify(updateInfo, null, '\t'), 'utf-8');
+			wxt.logger.success(`Generated update.json at ${outputPath}`);
 		}
 	}
 });
