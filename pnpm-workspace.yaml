@@ -2,4 +2,5 @@ allowBuilds:
   es5-ext: false
   esbuild: true
   spawn-sync: true
+  unrs-resolver: false
 blockExoticSubdeps: false

@@ -13,10 +13,7 @@ const TAG_MATCH = {
 	patch: 'v[0-9]*\\.[0-9]*\\.[0-9]*',
 };
 
-export async function getGitInfo(
-	since: keyof typeof TAG_MATCH = 'minor',
-	dirty = '+dirty',
-) {
+export async function getGitInfo(since: keyof typeof TAG_MATCH = 'minor', dirty = '+dirty') {
 	try {
 		const ret = await execCmd('git rev-parse --is-inside-work-tree');
 		if (ret !== 'true') {
@@ -39,7 +36,9 @@ export async function getGitInfo(
 			const count = await execCmd(`git rev-list --count ${baseTag}..HEAD`);
 			buildNumber = `.${count}`;
 		} else {
-			console.warn(`No tags found matching pattern '${versionPattern}', using default build number ${buildNumber}`);
+			console.warn(
+				`No tags found matching pattern '${versionPattern}', using default build number ${buildNumber}`,
+			);
 		}
 	} catch {
 		console.warn(`Failed to get git build number, using default build number ${buildNumber}`);

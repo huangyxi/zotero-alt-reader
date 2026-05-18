@@ -6,14 +6,33 @@
 	"config": {
 		"pluginName": "Alternative Reader",
 		"pluginId": "zotero-alt-reader@hyxi.dev",
-		"pluginInstance": "AltReader"
+		"pluginInstance": "AltReader",
+		"zoteroVersion": {
+			"strict_min_version": "9.0",
+			"strict_max_version": "9.*"
+		}
 	},
 	"scripts": {
 		"build": "wxt build -b firefox",
 		"package": "wxt zip -b firefox",
+		"check": "npm-run-all lint typecheck",
+		"lint": "npm-run-all --continue-on-error lint:*",
+		"lint:eslint": "eslint",
+		"lint:prettier": "prettier --check .",
+		"format": "npm-run-all format:*",
+		"format:eslint": "eslint --fix",
+		"format:prettier": "prettier --write .",
+		"typecheck": "tsc --noEmit",
 		"postinstall": "wxt prepare"
 	},
 	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^8.59.3",
+		"@typescript-eslint/parser": "^8.59.3",
+		"eslint": "^10.4.0",
+		"eslint-plugin-simple-import-sort": "^13.0.0",
+		"npm-run-all2": "^8.0.4",
+		"prettier": "^3.8.3",
+		"prettier-plugin-multiline-arrays": "^4.1.8",
 		"typescript": "^6.0.3",
 		"vite": "^8.0.13",
 		"wxt": "^0.20.26",

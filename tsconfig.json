@@ -1,13 +1,18 @@
 {
 	"extends": "./.wxt/tsconfig.json",
-	"compilerOptions":{
-		"outDir":"./build",
-		"rootDir":"./src",
+	"compilerOptions": {
+		"rootDir": ".",
 		"types": [
 			"zotero-types/entries/mainWindow"
 		]
 	},
-	"include":[
-		"src/**/*"
+	"include": [
+		"src/**/*",
+		"*.ts"
+	],
+	"exclude": [
+		"node_modules/",
+		".wxt/",
+		".output/"
 	]
 }
