@@ -32,12 +32,10 @@ jobs:
       - name: Upload plugin artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ vars.PLUGIN_NAME }}.xpi
-          path: ${{ vars.OUTBASEDIR }}/${{ vars.PLUGIN_NAME }}-*.xpi
+          path: ${{ vars.OUTBASEDIR }}/*.xpi
           archive: false
       - name: Upload update.json artifact
         uses: actions/upload-artifact@v7
         with:
-          name: update.json
           path: ${{ vars.OUTBASEDIR }}/update.json
           archive: false
