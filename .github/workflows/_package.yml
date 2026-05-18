@@ -29,10 +29,13 @@ jobs:
         run: pnpm install
       - name: Package plugin
         run: pnpm run package
+      - name: Get plugin file path
+        id: get_plugin_path
+        run: echo "PLUGIN_FILE=$(find ${{ vars.OUTBASEDIR }} -name '*.xpi' | head -n 1)" >> "$GITHUB_OUTPUT"
       - name: Upload plugin artifact
         uses: actions/upload-artifact@v7
         with:
-          path: ${{ vars.OUTBASEDIR }}/*.xpi
+          path: ${{ steps.get_plugin_path.outputs.PLUGIN_FILE }}
           archive: false
       - name: Upload update.json artifact
         uses: actions/upload-artifact@v7
