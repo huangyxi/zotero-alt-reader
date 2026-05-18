@@ -39,10 +39,12 @@ jobs:
       - name: Run TypeScript typecheck
         id: typecheck
         run: pnpm run typecheck
+      - name: Build plugin
+        run: pnpm run build
       - name: Job summary
         if: always()
         run: |
-          VERSION_NAME=$(jq -r '.version_name' < "${{ vars.OUTDIR }}/manifest.json")
+          VERSION=$(jq -r '.version' < "${{ vars.OUTDIR }}/manifest.json")
           status() {
             case "$1" in
               success) echo "✅ Passed" ;;
@@ -53,7 +55,7 @@ jobs:
           LINT_STATUS="${{ steps.lint.outcome }}"
           TYPECHECK_STATUS="${{ steps.typecheck.outcome }}"
           {
-            echo "## Check Results — ${VERSION_NAME}"
+            echo "## Check Results — ${VERSION}"
             echo ""
             echo "| Check | Status |"
             echo "| --- | --- |"

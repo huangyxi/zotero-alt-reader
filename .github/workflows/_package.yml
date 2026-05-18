@@ -8,8 +8,6 @@ on:
 
 jobs:
   main:
-    env:
-      OUTBASEDIR: .output
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -35,11 +33,11 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ${{ vars.PLUGIN_NAME }}.xpi
-          path: ${{ env.OUTBASEDIR }}/${{ vars.PLUGIN_NAME }}-*.xpi
+          path: ${{ vars.OUTBASEDIR }}/${{ vars.PLUGIN_NAME }}-*.xpi
           archive: false
       - name: Upload update.json artifact
         uses: actions/upload-artifact@v7
         with:
           name: update.json
-          path: ${{ env.OUTBASEDIR }}/update.json
+          path: ${{ vars.OUTBASEDIR }}/update.json
           archive: false
