@@ -1,0 +1,22 @@
+{
+	"name": "zotero-alt-reader",
+	"description": "An alternative reader for Zotero",
+	"author": "Mark Huang @huangyxi",
+	"homepage": "https://github.com/huangyxi/zotero-alt-reader",
+	"config": {
+		"pluginName": "Alternative Reader",
+		"pluginId": "zotero-alt-reader@hyxi.dev",
+		"pluginInstance": "AltReader"
+	},
+	"scripts": {
+		"build": "wxt build -b firefox",
+		"package": "wxt zip -b firefox",
+		"postinstall": "wxt prepare"
+	},
+	"devDependencies": {
+		"typescript": "^6.0.3",
+		"vite": "^8.0.13",
+		"wxt": "^0.20.26",
+		"zotero-types": "^4.1.2"
+	}
+}
