@@ -53,14 +53,14 @@ export class AltReaderPlugin {
 					} finally {
 						Zotero.Prefs.set('fileHandler.pdf', pdfFileHandler);
 					}
-				});
-				const firstSeparator = menu.querySelector('menuseparator[zotero-locate="true"]');
-				if (firstSeparator) {
-					menu.insertBefore(menuitem, firstSeparator);
-				} else {
-					menu.insertBefore(menuitem, menu.firstChild);
-				}
+				})();
 			});
+			const firstSeparator = menu.querySelector('menuseparator[zotero-locate="true"]');
+			if (firstSeparator) {
+				menu.insertBefore(menuitem, firstSeparator);
+			} else {
+				menu.insertBefore(menuitem, menu.firstChild);
+			}
 		};
 	}
 
