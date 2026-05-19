@@ -1,10 +1,12 @@
 type Params = Parameters<_ZoteroTypes.Plugins._observerFunction>[0];
 
+export interface Plugin {
+	startup: (params: Params, reason: number) => Promise<void> | void;
+	shutdown?: (params: Params, reason: number) => Promise<void> | void;
+}
+
 export type PluginGlobal = typeof globalThis & {
-	__PLUGIN_INSTANCE__?: {
-		startup: (params: Params, reason: number) => Promise<void> | void;
-		shutdown?: (params: Params, reason: number) => Promise<void> | void;
-	};
+	__PLUGIN_INSTANCE__?: Plugin;
 };
 
 export function install(_params: Params, _reason: number) {}
