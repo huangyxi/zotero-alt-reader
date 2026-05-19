@@ -5,16 +5,10 @@ permissions:
 
 on:
   workflow_call:
-    outputs:
-      lint_result:
-        description: 'Result of the lint step (success, failure, or skipped)'
-        value: ${{ jobs.main.outputs.lint_result }}
 
 jobs:
   main:
     runs-on: ubuntu-latest
-    outputs:
-      lint_result: ${{ steps.lint.outcome }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -39,12 +33,13 @@ jobs:
       - name: Run TypeScript typecheck
         id: typecheck
         run: pnpm run typecheck
-      - name: Build plugin
+      - name: Build plugin for version calculation
+        if: always()
         run: pnpm run build
       - name: Job summary
         if: always()
         run: |
-          VERSION=$(jq -r '.version' < "${{ vars.OUTDIR }}/manifest.json")
+          VERSION=$(jq -r '.version' < "${{ vars.OUTDIR }}/manifest.json" || echo "[VERSION NOT FOUND]")
           status() {
             case "$1" in
               success) echo "✅ Passed" ;;
