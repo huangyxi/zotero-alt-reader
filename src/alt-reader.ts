@@ -17,6 +17,10 @@ function patch_buildContextMenu_after<T extends BuildContextMenuFunction>(
 export class AltReaderPlugin implements Plugin {
 	private originalBuildContextMenu = new WeakMap<_ZoteroTypes.MainWindow, BuildContextMenuFunction>();
 
+	private MENU_ITEM_ID = 'zotero-alt-reader-open';
+	private ATTR_LOCATE = 'zotero-locate';
+	private PREF_PDF_HANDLER = 'fileHandler.pdf';
+
 	public startup(_params: Params, _reason: number) {
 		const window = Zotero.getMainWindow();
 		if (window) {
@@ -51,35 +55,31 @@ export class AltReaderPlugin implements Plugin {
 			Zotero_LocateMenu.buildContextMenu = this.originalBuildContextMenu.get(window)!;
 			this.originalBuildContextMenu.delete(window);
 		}
-		const menuitem = window.document.getElementById('zotero-alt-reader-open');
+		const menuitem = window.document.getElementById(this.MENU_ITEM_ID);
 		if (menuitem) {
 			menuitem.remove();
 		}
 	}
 
-	private injectAltReaderMenuItem(
-		window: _ZoteroTypes.MainWindow,
-		menu: Element,
-		_showIcons: boolean,
-	) {
-		if (menu.querySelector('#zotero-alt-reader-open')) return;
+	private injectAltReaderMenuItem(window: _ZoteroTypes.MainWindow, menu: Element, _showIcons: boolean) {
+		if (menu.querySelector(`#${this.MENU_ITEM_ID}`)) return;
 
 		const menuitem = window.document.createXULElement('menuitem');
-		menuitem.id = 'zotero-alt-reader-open';
-		menuitem.setAttribute('zotero-locate', 'true');
-		const currentHandler = Zotero.Prefs.get('fileHandler.pdf') || '';
+		menuitem.id = this.MENU_ITEM_ID;
+		menuitem.setAttribute(this.ATTR_LOCATE, 'true');
+		const currentHandler = Zotero.Prefs.get(this.PREF_PDF_HANDLER) ?? '';
 		menuitem.setAttribute('label', currentHandler === '' ? 'Open in System Viewer' : 'Open in Zotero Reader');
 		menuitem.addEventListener('command', (_event: Event) => void this.openInAlternativeReader());
-		const firstSeparator = menu.querySelector('menuseparator[zotero-locate="true"]');
+		const firstSeparator = menu.querySelector(`menuseparator[${this.ATTR_LOCATE}="true"]`);
 		if (firstSeparator) {
 			menu.insertBefore(menuitem, firstSeparator);
 		} else {
 			menu.insertBefore(menuitem, menu.firstChild);
 		}
-	};
+	}
 
 	private async openInAlternativeReader() {
-		const pdfFileHandler = Zotero.Prefs.get('fileHandler.pdf') || '';
+		const pdfFileHandler = Zotero.Prefs.get(this.PREF_PDF_HANDLER) ?? '';
 		const isZoteroDefault = pdfFileHandler === '';
 		const pane = Zotero.getActiveZoteroPane();
 		const items = pane.getSelectedItems();
@@ -87,13 +87,12 @@ export class AltReaderPlugin implements Plugin {
 			item.isAttachment() ? [item.id] : item.getAttachments ? item.getAttachments() : [],
 		);
 		try {
-			Zotero.Prefs.set('fileHandler.pdf', isZoteroDefault ? 'system' : '');
+			Zotero.Prefs.set(this.PREF_PDF_HANDLER, isZoteroDefault ? 'system' : '');
 			for (const id of attachmentIds) {
 				await pane.viewPDF(id, {});
 			}
 		} finally {
-			Zotero.Prefs.set('fileHandler.pdf', pdfFileHandler);
+			Zotero.Prefs.set(this.PREF_PDF_HANDLER, pdfFileHandler);
 		}
 	}
-
 }

@@ -37,7 +37,6 @@ export default defineConfig({
 		author: pkg.author,
 		homepage_url: pkg.homepage,
 		applications: {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			zotero: {
 				id: pkg.config.pluginId,
 				update_url: `${pkg.homepage}/releases/download/release/update.json`,
@@ -102,7 +101,6 @@ export default defineConfig({
 								update_link: `${pkg.homepage}/releases/download/${tag}/${path.basename(zipFile)}`,
 								update_hash: `sha256:${hash}`,
 								applications: {
-									// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 									zotero: pkg.config.zoteroVersion,
 								},
 							},
