@@ -22,6 +22,10 @@ if (process.env.GITHUB_SERVER_URL && process.env.GITHUB_REPOSITORY && process.en
 	);
 }
 
+const REPLACEMENT_DEFINES = {
+	__PLUGIN_INSTANCE__: JSON.stringify(pkg.config.pluginInstance),
+};
+
 export default defineConfig({
 	srcDir: 'src',
 	manifestVersion: 2,
@@ -33,6 +37,7 @@ export default defineConfig({
 		author: pkg.author,
 		homepage_url: pkg.homepage,
 		applications: {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			zotero: {
 				id: pkg.config.pluginId,
 				update_url: `${pkg.homepage}/releases/download/release/update.json`,
@@ -56,9 +61,7 @@ export default defineConfig({
 				},
 			},
 		},
-		define: {
-			__PLUGIN_INSTANCE__: JSON.stringify(pkg.config.pluginInstance),
-		},
+		define: REPLACEMENT_DEFINES,
 	}),
 	hooks: {
 		// Build bootstrap.js using Vite
@@ -82,9 +85,7 @@ export default defineConfig({
 						fileName: () => 'bootstrap.js',
 					},
 				},
-				define: {
-					__PLUGIN_INSTANCE__: JSON.stringify(pkg.config.pluginInstance),
-				},
+				define: REPLACEMENT_DEFINES,
 			});
 		},
 		// Generate update.json for GitHub Releases
@@ -101,6 +102,7 @@ export default defineConfig({
 								update_link: `${pkg.homepage}/releases/download/${tag}/${path.basename(zipFile)}`,
 								update_hash: `sha256:${hash}`,
 								applications: {
+									// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 									zotero: pkg.config.zoteroVersion,
 								},
 							},
