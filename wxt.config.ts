@@ -79,7 +79,8 @@ export default defineConfig({
 					},
 					lib: {
 						entry: 'src/bootstrap.ts',
-						formats: ['cjs'],
+						name: '_ZoteroPluginBootstrap',
+						formats: ['iife'],
 						fileName: () => 'bootstrap.js',
 					},
 				},

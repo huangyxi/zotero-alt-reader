@@ -9,9 +9,9 @@ export type PluginGlobal = typeof globalThis & {
 	__PLUGIN_INSTANCE__?: Plugin;
 };
 
-export function install(_params: Params, _reason: number) {}
+function install(_params: Params, _reason: number) {}
 
-export async function startup(params: Params, reason: number) {
+async function startup(params: Params, reason: number) {
 	Services.scriptloader.loadSubScript(params.rootURI + 'main.js');
 	const plugin = (globalThis as PluginGlobal)[__PLUGIN_INSTANCE__];
 	if (!plugin) {
@@ -20,7 +20,7 @@ export async function startup(params: Params, reason: number) {
 	await plugin.startup(params, reason);
 }
 
-export async function shutdown(params: Params, reason: number) {
+async function shutdown(params: Params, reason: number) {
 	const plugin = (globalThis as PluginGlobal)[__PLUGIN_INSTANCE__];
 	if (!plugin) {
 		return;
@@ -29,4 +29,11 @@ export async function shutdown(params: Params, reason: number) {
 	delete (globalThis as PluginGlobal)[__PLUGIN_INSTANCE__];
 }
 
-export function uninstall(_params: Params, _reason: number) {}
+function uninstall(_params: Params, _reason: number) {}
+
+Object.assign(globalThis, {
+	install,
+	startup,
+	shutdown,
+	uninstall,
+});
