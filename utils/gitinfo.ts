@@ -52,7 +52,6 @@ export async function getGitInfo(since: keyof typeof TAG_MATCH = 'minor', dirty 
 			version = version.slice(0, -dirty.length);
 		}
 		version = `${version}${buildNumber}`;
-		tag = tag.endsWith(dirty) ? `v${version}${dirty}` : `v${version}`;
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.warn(`Failed to get git tag, using default version ${version}, ${message}`);
@@ -61,7 +60,7 @@ export async function getGitInfo(since: keyof typeof TAG_MATCH = 'minor', dirty 
 	try {
 		const stdout = await execCmd(`git rev-parse HEAD`);
 		const commit = stdout.slice(0, 8);
-		version_name = `${tag}-${commit}`;
+		version_name = tag.endsWith(dirty) ? `v${version}${dirty}-${commit}` : `v${version}-${commit}`;
 	} catch {
 		console.warn(`Failed to get git commit, using default version name ${version_name}`);
 	}
