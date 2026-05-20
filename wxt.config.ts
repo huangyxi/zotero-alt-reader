@@ -39,7 +39,7 @@ export default defineConfig({
 		applications: {
 			zotero: {
 				id: pkg.config.pluginId,
-				update_url: `${pkg.homepage}/releases/download/release/update.json`,
+				update_url: `${pkg.homepage}/releases/latest/download/update.json`,
 				...pkg.config.zoteroVersion,
 			},
 		},
