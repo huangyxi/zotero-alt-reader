@@ -30,10 +30,3 @@ export async function shutdown(params: Params, reason: number) {
 }
 
 export function uninstall(_params: Params, _reason: number) {}
-
-Object.assign(globalThis, {
-	install,
-	startup,
-	shutdown,
-	uninstall,
-});
