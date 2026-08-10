@@ -82,6 +82,7 @@ export class AltReaderPlugin implements Plugin {
 		const pdfFileHandler = Zotero.Prefs.get(this.PREF_PDF_HANDLER) ?? '';
 		const isZoteroDefault = pdfFileHandler === '';
 		const pane = Zotero.getActiveZoteroPane();
+		if (!pane) return;
 		const items = pane.getSelectedItems();
 		const attachmentIds = items.flatMap((item: Zotero.Item) =>
 			item.isAttachment() ? [item.id] : item.getAttachments ? item.getAttachments() : [],

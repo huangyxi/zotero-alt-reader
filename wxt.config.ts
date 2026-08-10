@@ -90,6 +90,7 @@ export default defineConfig({
 		// Generate update.json for GitHub Releases
 		'zip:done': async (wxt: Wxt, zipFiles: string[]) => {
 			const zipFile = zipFiles[0];
+			if (!zipFile) throw new Error('No ZIP artifact was generated');
 			const fileBuffer = await fs.readFile(zipFile);
 			const hash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
 			const updateInfo = {
