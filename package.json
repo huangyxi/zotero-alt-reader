@@ -8,8 +8,8 @@
 		"pluginId": "zotero-alt-reader@hyxi.dev",
 		"pluginInstance": "AltReader",
 		"zoteroVersion": {
-			"strict_min_version": "9.0",
-			"strict_max_version": "9.*"
+			"strict_min_version": "10.0",
+			"strict_max_version": "10.*"
 		}
 	},
 	"scripts": {
