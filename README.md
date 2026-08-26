@@ -6,6 +6,8 @@
 
 A lightweight plugin for Zotero 10 that adds a right-click menu to open PDFs in your alternative reader (using the system default if Zotero is your primary reader, and vice versa).
 
+![Usage](https://github.com/user-attachments/assets/e195dc31-0e71-47a5-9d8f-dab7af0332dc)
+
 ### Installation
 
 1. Download the `.xpi` file [here](https://github.com/huangyxi/zotero-alt-reader/releases/latest).
