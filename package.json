@@ -26,10 +26,10 @@
 		"postinstall": "wxt prepare"
 	},
 	"devDependencies": {
-		"@typescript-eslint/eslint-plugin": "^8.67.0",
-		"@typescript-eslint/parser": "^8.67.0",
+		"@typescript-eslint/eslint-plugin": "^8.68.0",
+		"@typescript-eslint/parser": "^8.68.0",
 		"@typescript/native": "npm:typescript@^7.0.2",
-		"eslint": "^10.8.1",
+		"eslint": "^10.9.1",
 		"eslint-plugin-simple-import-sort": "^14.0.0",
 		"npm-run-all2": "^9.0.3",
 		"prettier": "^3.9.6",
